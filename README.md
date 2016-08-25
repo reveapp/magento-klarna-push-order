@@ -13,7 +13,7 @@ Any of following Magento modules must be installed and configured for Klarna Che
  - [Klarna Checkout module for Magento](https://www.magentocommerce.com/magento-connect/klarna-checkout-module-for-magento.html)
  - Klarna NG from Oddny
 
-### Manuel
+### Manually
 
 Copy content from `src` folder to Magento root ex `/var/www/htdocs'
 
