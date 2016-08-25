@@ -1,0 +1,106 @@
+<_>
+   <form_key>ZTPz3Y9gEPqIvA5O</form_key>
+   <name>Reve_KlarnaPushOrder</name>
+   <channel>community</channel>
+   <version_ids>
+      <version_ids>2</version_ids>
+   </version_ids>
+   <summary>Enable Klarna Checkout Push Orders from Reve</summary>
+   <description>Enable Klarna Checkout Push Orders from Reve
+
+Require any of following modules to be installed and configured.
+
+- Klarna Payment extension (Official)
+- Klarna Checkout module for Magento
+- Klarna NG from Oddny</description>
+   <license>OSL v3.0</license>
+   <license_uri>http://opensource.org/licenses/osl-3.0.php</license_uri>
+   <version>0.6.0</version>
+   <stability>stable</stability>
+   <notes>Enable Klarna Checkout Push Orders from Reve</notes>
+   <authors>
+      <name>
+         <name>Andreas Wålm</name>
+         <name>Dmitry Shirokovskiy</name>
+         <name>Marc Coll</name>
+      </name>
+      <user>
+         <user>reve_walm</user>
+         <user>shirokovskiy</user>
+         <user>reve_marc</user>
+      </user>
+      <email>
+         <email>andreas@reveapp.com</email>
+         <email>info@phpwebstudio.com</email>
+         <email>marc@reveapp.com</email>
+      </email>
+   </authors>
+   <depends_php_min>5.3.0</depends_php_min>
+   <depends_php_max>6.0.0</depends_php_max>
+   <depends>
+      <package>
+         <name>
+            <name/>
+         </name>
+         <channel>
+            <channel/>
+         </channel>
+         <min>
+            <min/>
+         </min>
+         <max>
+            <max/>
+         </max>
+         <files>
+            <files>       </files>
+         </files>
+      </package>
+      <extension>
+         <name>
+            <name>Core</name>
+         </name>
+         <min>
+            <min/>
+         </min>
+         <max>
+            <max/>
+         </max>
+      </extension>
+   </depends>
+   <contents>
+      <target>
+         <target>magelocal</target>
+         <target>magecommunity</target>
+         <target>mageetc</target>
+         <target>magelib</target>
+      </target>
+      <path>
+         <path/>
+         <path>Reve</path>
+         <path>modules/Reve_KlarnaPushOrder.xml</path>
+         <path>ReveKlarna</path>
+      </path>
+      <type>
+         <type>file</type>
+         <type>dir</type>
+         <type>file</type>
+         <type>dir</type>
+      </type>
+      <include>
+         <include/>
+         <include/>
+         <include/>
+         <include/>
+      </include>
+      <ignore>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+         <ignore/>
+      </ignore>
+   </contents>
+   <page>1</page>
+   <limit>200</limit>
+   <folder/>
+   <package/>
+</_>

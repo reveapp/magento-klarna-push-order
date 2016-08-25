@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+- - Created by   : Dmitry Shirokovskiy.
+- - Email        : info@phpwebstudio.com
+- - Created at   : 10.07.16, 19:35
+- - Description  : module access layer
+-->
+<config>
+  <acl>
+    <resources>
+      <admin>
+        <children>
+          <system>
+            <children>
+              <config>
+                <children>
+                  <revetab>
+                    <title>Klarna PushOrder Settings</title>
+                  </revetab>
+                </children>
+              </config>
+            </children>
+          </system>
+        </children>
+      </admin>
+    </resources>
+  </acl>
+</config>

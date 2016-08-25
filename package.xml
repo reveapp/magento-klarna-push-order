@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package>
+    <name>Reve_KlarnaPushOrder</name>
+    <version>0.6.0</version>
+    <stability>stable</stability>
+    <license uri="http://opensource.org/licenses/osl-3.0.php">OSL v3.0</license>
+    <channel>community</channel>
+    <extends/>
+    <summary>Enable Klarna Checkout Push Orders from Reve</summary>
+    <description>Enable Klarna Checkout Push Orders from Reve&#xD;
+&#xD;
+Require any of following modules to be installed and configured.&#xD;
+&#xD;
+- Klarna Payment extension (Official)&#xD;
+- Klarna Checkout module for Magento&#xD;
+- Klarna NG from Oddny</description>
+    <notes>Enable Klarna Checkout Push Orders from Reve</notes>
+    <authors><author><name>Andreas W&#xE5;lm</name><user>reve_walm</user><email>andreas@reveapp.com</email></author><author><name>Dmitry Shirokovskiy</name><user>shirokovskiy</user><email>info@phpwebstudio.com</email></author><author><name>Marc Coll</name><user>reve_marc</user><email>marc@reveapp.com</email></author></authors>
+    <date>2016-08-25</date>
+    <time>08:05:46</time>
+    <contents><target name="magecommunity"><dir name="Reve"><dir name="KlarnaPushOrder"><dir name="Helper"><file name="Data.php" hash="c43a8a4bb89c8d8042b477e1ebd0e051"/></dir><dir name="Model"><file name="Customer.php" hash="257a360e827f0cab3d4d6dc014a8380f"/><file name="Observer.php" hash="f79cc81790783d83ec1e3118d806efbd"/><file name="Order.php" hash="07901e86213f136a2757f6f65550fab2"/></dir><dir name="controllers"><file name="OrderController.php" hash="a151df554e1cf55605b2688b1c1e9034"/></dir><dir name="etc"><file name="adminhtml.xml" hash="680a85dc727a3ab1d02f2caaad176d99"/><file name="config.xml" hash="a3dcc8a8ad57705ade1990f3181951b1"/><file name="system.xml" hash="1335a766d21c9427857a43e497527801"/></dir></dir></dir></target><target name="mageetc"><dir name="modules"><file name="Reve_KlarnaPushOrder.xml" hash="31a2babbac61758f23bbd098480b66af"/></dir></target><target name="magelib"><dir name="ReveKlarna"><dir name="Checkout"><file name="ApiErrorException.php" hash="2ee753ea8d9bb25c3042c39574740234"/><file name="BasicConnector.php" hash="c73f620bd0e425c1078b326e43e3e696"/><file name="ConnectionErrorException.php" hash="47ad168d89258dd0f50d346db2039e3e"/><file name="Connector.php" hash="af278e09f9ead41efaffb309db9d1d1c"/><file name="ConnectorException.php" hash="22fcdb95e62b2ac1d11c76367dc3fa21"/><file name="ConnectorInterface.php" hash="f8fc74692b80983902a4ccdf3e7386f0"/><file name="Digest.php" hash="2df60ce55deb399f27a9b8d26dd4c5eb"/><file name="Exception.php" hash="94bc7cfdb48499b11b275138d9130daf"/><dir name="HTTP"><file name="CURLFactory.php" hash="28b3477792209a92ffbcc6e45ba2c7a6"/><file name="CURLHandle.php" hash="7483b87c4f373224615d912093a47821"/><file name="CURLHandleInterface.php" hash="f9482c3e6dce14dddc147490a81b854a"/><file name="CURLHeaders.php" hash="7da7e965a475ad8af6cf2b4ca9f63720"/><file name="CURLTransport.php" hash="c10c719fb4dbad75f0a60156b3cea105"/><file name="Request.php" hash="adade3aec9d24b96e6a7e780fb66cbd0"/><file name="Response.php" hash="85b94dd9e111af17d6af712a2d84c871"/><file name="Transport.php" hash="bea26f81efd9ccba64747bd977d25674"/><file name="TransportInterface.php" hash="083d333e9086209df8c8ffdafa4ab5f5"/></dir><file name="Order.php" hash="1cb248c7fc97a9a6b66f3540f215a514"/><file name="RecurringOrder.php" hash="15aef53ffbfcac56db7b4db1f752dc96"/><file name="RecurringStatus.php" hash="9088af9342a91242f81431428148c537"/><file name="Resource.php" hash="095eba98dbebe0a564df348bbc92ee8e"/><file name="ResourceCreateableInterface.php" hash="d8418dc77baf443082cb37b1f3c7ceaf"/><file name="ResourceFetchableInterface.php" hash="738054af83559cc13486a0d4d1b2892d"/><file name="ResourceInterface.php" hash="fdc0847b0976a4a55eb08e426ab97bc0"/><file name="ResourceUpdateableInterface.php" hash="8db5c24203a7ef93c2b65917afaa095a"/><file name="UserAgent.php" hash="2dc447f79dc1cbd32cd68e5c4d594e28"/></dir><file name="Checkout.php" hash="e9afded2fb815d67d7b5e84e9886eb9c"/></dir></target></contents>
+    <compatible/>
+    <dependencies><required><php><min>5.3.0</min><max>6.0.0</max></php></required></dependencies>
+</package>

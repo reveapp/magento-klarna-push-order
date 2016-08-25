@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+- - Created by   : Dmitry Shirokovskiy.
+- - Email        : info@phpwebstudio.com
+- - Created at   : 10.07.16, 18:55
+- - Description  : module config info & behaviour
+-->
+<config>
+  <modules>
+    <Reve_KlarnaPushOrder>
+      <version>1.0.0</version>
+    </Reve_KlarnaPushOrder>
+  </modules>
+
+  <global>
+    <events>
+      <order_cancel_after>
+        <observers>
+          <reve_klarnapushorder_model_observer_cancel_order>
+            <type>singleton</type>
+            <class>Reve_KlarnaPushOrder_Model_Observer</class>
+            <method>cancelOrder</method>
+          </reve_klarnapushorder_model_observer_cancel_order>
+        </observers>
+      </order_cancel_after>
+    </events>
+    <models>
+      <klarnapushorder>
+        <class>Reve_KlarnaPushOrder_Model</class>
+      </klarnapushorder>
+    </models>
+    <helpers>
+      <klarnapushorder>
+        <class>Reve_KlarnaPushOrder_Helper</class>
+      </klarnapushorder>
+    </helpers>
+  </global>
+
+  <frontend>
+    <routers>
+      <klarnapushorder>
+        <use>standard</use>
+        <args>
+          <module>Reve_KlarnaPushOrder</module>
+          <frontName>reve_klarna</frontName>
+        </args>
+      </klarnapushorder>
+    </routers>
+  </frontend>
+</config>

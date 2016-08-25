@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+- - Created by   : Dmitry Shirokovskiy.
+- - Email        : info@phpwebstudio.com
+- - Created at   : 10.07.16, 19:25
+- - Description  : AdminHtml blocks & settings
+-->
+<config>
+  <tabs>
+    <klarnapushorder translate="label">
+      <label>ReveApp Modules</label>
+      <sort_order>150</sort_order>
+    </klarnapushorder>
+  </tabs>
+  <sections>
+    <revetab translate="label" module="adminhtml">
+      <label>Reve Klarna PushOrder</label>
+      <tab>klarnapushorder</tab>
+      <sort_order>10</sort_order>
+      <show_in_default>1</show_in_default>
+      <show_in_website>1</show_in_website>
+      <show_in_store>1</show_in_store>
+      <groups>
+        <general translate="label comment">
+          <label>General</label>
+          <sort_order>50</sort_order>
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+          <fields>
+            <active translate="label comment">
+              <label>Activate Klarna pushing orders</label>
+              <frontend_type>select</frontend_type>
+              <sort_order>54</sort_order>
+              <source_model>adminhtml/system_config_source_enabledisable</source_model>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+            </active>
+
+            <klarna_attr_names translate="label comment">
+              <label>Product attributes names</label>
+              <frontend_type>text</frontend_type>
+              <comment>Coma separated attribute names for Klarna</comment>
+              <sort_order>57</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>0</show_in_website>
+              <show_in_store>0</show_in_store>
+              <frontend_class>required-entry</frontend_class>
+            </klarna_attr_names>
+          </fields>
+        </general>
+      </groups>
+    </revetab>
+  </sections>
+</config>
