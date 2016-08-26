@@ -1,0 +1,3 @@
+src/app/code/community/Reve/*                       app/code/community/Reve/
+src/lib/ReveKlarna/*				                lib/ReveKlarna/
+src/app/etc/modules/Reve_KlarnaPushOrder.xml		app/etc/modules/Reve_KlarnaPushOrder.xml
