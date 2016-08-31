@@ -26,38 +26,58 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
     require_once 'ReveKlarna/Checkout.php';
     $response = ['status' => 'SUCCESS'];
 
-    if ($this->_getHelper()->getIsEnabled()) {
-      # get URL parameters
-      $klarnaOrderId = $this->getRequest()->getParam('klarna_order');
-      $storeID = $this->getRequest()->getParam('storeID');
-      if ($storeID <= 0) {
-        $storeID = 1;
-      }
+    $isEnabled = $this->_getHelper()->getIsEnabled();
 
-      Mage::app()->setCurrentStore($storeID);
+    # get URL parameters
+    $storeID = $this->getRequest()->getParam('storeID');
+    $infoOnly = $this->getRequest()->getParam('info') == "1";
+    $klarnaOrderId = $this->getRequest()->getParam('klarna_order');
 
+    if ($storeID <= 0) { $storeID = 1; }
+    Mage::app()->setCurrentStore($storeID);
+
+    // get Klarna settings
+
+    // Avenla module settings
+    $klarnaModule = null;
+    $klarnaServer = Mage::getStoreConfig('payment/klarnaCheckout_payment/server');
+    $klarnaSecret = Mage::helper('core')->decrypt(Mage::getStoreConfig('payment/klarnaCheckout_payment/sharedsecret'));
+    if ($klarnaSecret && !$klarnaModule) $klarnaModule = "Avenla";
+
+    // Klarna Official settings
+    if (!$klarnaServer) $klarnaServer = Mage::getStoreConfig('payment/vaimo_klarna_checkout/host');
+    if (!$klarnaSecret) $klarnaSecret = Mage::getStoreConfig('payment/vaimo_klarna_checkout/shared_secret');
+    if ($klarnaSecret && !$klarnaModule) $klarnaModule = "Klarna Official";
+
+    // Oddny/KL_Klarna_NG settings
+    if (!$klarnaServer) $klarnaServer = (Mage::getStoreConfig('payment/klarna/live') == "1" ? "LIVE" : "DEMO");
+    if (!$klarnaSecret) $klarnaSecret = Mage::getStoreConfig('payment/klarna/shared_secret');
+    if ($klarnaSecret && !$klarnaModule) $klarnaModule = "Oddny/KL_Klarna_NG";
+
+    $klarnaUseTest = in_array(strtolower($klarnaServer), ['demo', 'test', 'testdrive', 'beta']);
+
+    if ($infoOnly) {
+      $reveOrder = Mage::getModel("klarnapushorder/order");
+
+      $response['testMode'] = $klarnaUseTest;
+      $response['klarnaModule'] = $klarnaModule;
+      $response['paymentMethodCode'] = $reveOrder->getPaymentMethodCode();
+      $response['shippingMethodCode'] = $reveOrder->getShippingMethodCode();
+      $response['attrNames'] = $this->_getHelper()->getKlarnaAttrNames();
+      $response['availableShippingMethods'] = $reveOrder->getAvailableShippingMethodCodes();
+      $this->writeResponse($response);
+      return;
+    }
+
+    if ($isEnabled) {
       Mage::log("-----------", null, "klarnapushorder-checkout.log");
       Mage::log("Processing Klarna order:". $klarnaOrderId, null, "klarnapushorder-checkout.log");
 
       $reveOrder = Mage::getModel("klarnapushorder/order");
 
-      // Avenla module settings
-      $klarnaServer = Mage::getStoreConfig('payment/klarnaCheckout_payment/server');
-      $klarnaSecret = Mage::helper('core')->decrypt(Mage::getStoreConfig('payment/klarnaCheckout_payment/sharedsecret'));
-
-      // Klarna Official settings
-      if (!$klarnaServer) $klarnaServer = Mage::getStoreConfig('payment/vaimo_klarna_checkout/host');
-      if (!$klarnaSecret) $klarnaSecret = Mage::getStoreConfig('payment/vaimo_klarna_checkout/shared_secret');
-
-      // Oddny/KL_Klarna_NG settings
-      if (!$klarnaServer) $klarnaServer = (Mage::getStoreConfig('payment/klarna/live') == "1" ? "LIVE" : "DEMO");
-      if (!$klarnaSecret) $klarnaSecret = Mage::getStoreConfig('payment/klarna/shared_secret');
-
       // Klarna setup
       $klarnaUrl = Klarna_Checkout_Connector::BASE_URL;
-      if ( in_array(strtolower($klarnaServer), ['demo', 'test', 'testdrive', 'beta']) ) {
-        $klarnaUrl = Klarna_Checkout_Connector::BASE_TEST_URL;
-      }
+      if ($klarnaUseTest) { $klarnaUrl = Klarna_Checkout_Connector::BASE_TEST_URL; }
 
       $connector = Klarna_Checkout_Connector::create(
         $klarnaSecret,
@@ -179,6 +199,14 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
     }
 
     Mage::log("-----------", null, "klarnapushorder-checkout.log");
-    $this->getResponse()->clearHeaders()->setHeader('Content-Type', 'application/json')->setBody(Mage::helper('core')->jsonEncode($response));
+    $this->writeResponse($response);
+  }
+
+  private function writeResponse($response) {
+    $this->getResponse()
+      ->clearHeaders()
+      ->setHeader('Content-Type', 'application/json')
+      ->setBody(Mage::helper('core')
+      ->jsonEncode($response));
   }
 }

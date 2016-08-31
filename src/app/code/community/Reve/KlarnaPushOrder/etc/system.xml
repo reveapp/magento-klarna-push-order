@@ -38,6 +38,17 @@
               <show_in_store>1</show_in_store>
             </active>
 
+            <shipping_method translate="label comment">
+              <label>Shipping method</label>
+              <frontend_type>text</frontend_type>
+              <comment></comment>
+              <sort_order>55</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>0</show_in_website>
+              <show_in_store>0</show_in_store>
+              <frontend_class>required-entry</frontend_class>
+            </shipping_method>
+
             <klarna_attr_names translate="label comment">
               <label>Product attributes names</label>
               <frontend_type>text</frontend_type>

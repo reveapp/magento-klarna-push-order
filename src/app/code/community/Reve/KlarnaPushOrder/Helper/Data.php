@@ -16,16 +16,13 @@ class Reve_KlarnaPushOrder_Helper_Data extends Mage_Core_Helper_Abstract
 
   public function getKlarnaAttrNames()
   {
-    $attrNames = Mage::getStoreConfigFlag('revetab/general/klarna_attr_names');
-    if (!empty($attrNames)) {
-      $attrNames = implode(",",$attrNames);
-    }
-
+    $attrNames = Mage::getStoreConfig('revetab/general/klarna_attr_names');
     return $attrNames;
   }
 
-  function getAttrInfo($label, $value, $sizeAttrNames){
+  function getAttrInfo($label, $value){
     $attrInfo = array();
+    $sizeAttrNames = $this->getKlarnaAttrNames();
 
     if (is_string($sizeAttrNames) && preg_match("/,/",$sizeAttrNames)) {
       $sizeAttrNames = explode(',',$sizeAttrNames);

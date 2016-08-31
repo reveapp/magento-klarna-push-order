@@ -9,9 +9,33 @@
  */
 class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
 {
-  const SHIPPING_METHOD_CODE = 'flatrate_flatrate';
+  const DEFAULT_SHIPPING_METHOD_CODE = 'flatrate_flatrate';
 
-  protected $sizeAttrNames = ['size'];
+  public function getShippingMethodCode()
+  {
+    $shippingCode = Mage::getStoreConfig('revetab/general/shipping_method');
+    if ($shippingCode != "")  {
+      return $shippingCode;
+    }
+    return self::DEFAULT_SHIPPING_METHOD_CODE;
+  }
+
+  public function getAvailableShippingMethodCodes()
+  {
+    $methodCodes = array();
+    $methods = Mage::getSingleton('shipping/config')->getActiveCarriers();
+
+    foreach($methods as $_ccode => $_carrier){
+      if($_methods = $_carrier->getAllowedMethods()){
+        foreach($_methods as $_mcode => $_method){
+          $_code = $_ccode . '_' . $_mcode;
+          array_push($methodCodes, $_code);
+        }
+      }
+    }
+
+    return $methodCodes;
+  }
 
   public function getPaymentMethodCode()
   {
@@ -54,7 +78,7 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
           $attrData = explode(':', $attr);
           $label = $attrData[0];
           $value = $attrData[1];
-          $attrInfo = Mage::helper('klarnapushorder')->getAttrInfo($label, $value, Mage::getStoreConfig("revetab/general/klarna_attr_names"));
+          $attrInfo = Mage::helper('klarnapushorder')->getAttrInfo($label, $value);
 
           $variantAttr['super_attribute'][intval($attrInfo['labelId'])] = intval($attrInfo['valueId']);
         }
@@ -107,7 +131,7 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
     $paymentMethodCode = $this->getPaymentMethodCode();
 
     // shipping and payments method
-    $shippingAddress->setShippingMethod(self::SHIPPING_METHOD_CODE)
+    $shippingAddress->setShippingMethod($this->getShippingMethodCode())
       ->setPaymentMethod($paymentMethodCode)
       ->setCollectShippingRates(true)
       ->collectShippingRates();
