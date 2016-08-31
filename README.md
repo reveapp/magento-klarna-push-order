@@ -17,9 +17,11 @@ Any of following Magento modules must be installed and configured for Klarna Che
 
 Copy content from `src` folder to Magento root ex `/var/www/htdocs'
 
-Open `System > Configuration > Reve Klarna PushOrder` in Magento Admin and set your `Product attributes names` for product variants if used.
+Open `System > Configuration > Reve Klarna PushOrder` in Magento Admin and set `Shipping method` to use for push orders and your `Product attributes names` for product variants if used.
 
 Enable the module.
+
+To view available shipping method codes used `//yoursite.com/reve_klarna/order/?info=1`
 
 ### Magento Connect
 
