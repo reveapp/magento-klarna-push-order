@@ -63,4 +63,19 @@ class Reve_KlarnaPushOrder_Helper_Data extends Mage_Core_Helper_Abstract
   {
     return Mage::getSingleton("sales/quote");
   }
+
+  public function callbackReve($orderId, $message)
+  {
+    try {
+      $ch = curl_init("https://www.reveapp.com/api/v1/orders/". $orderId ."/magento?data=". $message);
+      curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+      curl_setopt($ch, CURLOPT_HEADER, 0);
+      $data = curl_exec($ch);
+      curl_close($ch);
+    } catch (Exception $e) {
+      Mage::log("Error doing reve callback (see exception.log)",null,"klarnapushorder-checkout.log");
+      Mage::logException($e);
+    }
+  }
 }
