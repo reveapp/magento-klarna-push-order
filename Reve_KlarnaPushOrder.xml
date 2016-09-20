@@ -15,7 +15,7 @@ Require any of following modules to be installed and configured.
 - Klarna NG from Oddny</description>
    <license>OSL v3.0</license>
    <license_uri>http://opensource.org/licenses/osl-3.0.php</license_uri>
-   <version>0.6.0</version>
+   <version>0.8.0</version>
    <stability>stable</stability>
    <notes>Enable Klarna Checkout Push Orders from Reve</notes>
    <authors>

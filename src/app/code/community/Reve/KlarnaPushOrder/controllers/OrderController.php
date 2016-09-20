@@ -151,6 +151,9 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
             $transaction->save();
           }
           $payment->save();
+          $newOrder->setState('processing', 'processing', 'Push order from Klarna via Reve (ID:'. $klarnaOrderId .')')
+            ->setStatus('processing'); // TODO: should we have status as a config value?
+          $newOrder->save();
 
           Mage::log("Order created ID: ". $newOrder->getId(), null, "klarnapushorder-checkout.log");
 
