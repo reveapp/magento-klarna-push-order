@@ -67,7 +67,7 @@ class Reve_KlarnaPushOrder_Helper_Data extends Mage_Core_Helper_Abstract
   public function callbackReve($orderId, $message)
   {
     try {
-      $ch = curl_init("https://www.reveapp.com/api/v1/orders/". $orderId ."/magento?data=". $message);
+      $ch = curl_init("https://www.reveapp.com/api/v1/orders/". urlencode($orderId) ."/magento?data=". urlencode($message));
       curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
       curl_setopt($ch, CURLOPT_HEADER, 0);
