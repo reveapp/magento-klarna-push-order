@@ -21,6 +21,11 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
     return Mage::helper('klarnapushorder');
   }
 
+  protected function _getDefaultStoreId()
+  {
+    return Mage::app()->getWebsite()->getDefaultGroup()->getDefaultStoreId();
+  }
+
   public function indexAction()
   {
     require_once 'ReveKlarna/Checkout.php';
@@ -29,11 +34,11 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
     $isEnabled = $this->_getHelper()->getIsEnabled();
 
     # get URL parameters
-    $storeID = $this->getRequest()->getParam('storeID');
+    $storeID = $this->getRequest()->getParam('store');
     $infoOnly = $this->getRequest()->getParam('info') == "1";
     $klarnaOrderId = $this->getRequest()->getParam('klarna_order');
 
-    if ($storeID <= 0) { $storeID = 1; }
+    if (!isset($storeID)) { $storeID = $this->_getDefaultStoreId(); }
     Mage::app()->setCurrentStore($storeID);
 
     // get Klarna settings
@@ -104,7 +109,7 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
         Mage::log("Klarna Order ($klarnaOrderId) already exist!", null, "klarnapushorder-checkout.log");
 
         $response['status'] = 'ERROR';
-        $response['message'] = $this->__("Klarna Order ($klarnaOrderId) already exist!");
+        $response['message'] = $this->__("Error Klarna Order ($klarnaOrderId) already exist!");
         $this->writeResponse($response, $klarnaOrderId);
 
         Mage::log("-----------", null, "klarnapushorder-checkout.log");
@@ -142,6 +147,19 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
           $service->submitAll();
           $newOrder = $service->getOrder();
 
+          if (!is_object($newOrder)) {
+            Mage::log("Error pushing order", null, "klarnapushorder-checkout.log");
+
+            $this->_cancelKlarnaOrder($klarnaOrder);
+
+            $response['status'] = 'ERROR';
+            $response['message'] = $this->__("Error pushing order (store:$storeID).");
+            $this->writeResponse($response, $klarnaOrderId);
+
+            Mage::log("-----------", null, "klarnapushorder-checkout.log");
+            return;
+          }
+
           // generate a auth transaction, needed for Klarna Offical Module and Oddny/KL_Klarna_NG
           $payment = $newOrder->getPayment();
           $payment->setTransactionId( $klarnaOrder['reservation'] )
@@ -170,8 +188,10 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
           Mage::log("Error pushing order (see exception.log)",null,"klarnapushorder-checkout.log");
           Mage::logException($e);
 
+          $this->_cancelKlarnaOrder($klarnaOrder);
+
           $response['status'] = 'ERROR';
-          $response['message'] = $this->__("Error pushing order:".$e->getMessage());
+          $response['message'] = $this->__("Error pushing order (store:$storeID):".$e->getMessage());
           $this->writeResponse($response, $klarnaOrderId);
 
           Mage::log("-----------", null, "klarnapushorder-checkout.log");
@@ -199,6 +219,8 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
     } else {
       Mage::log("Module is Disabled!", null, "klarnapushorder-checkout.log");
 
+      $this->_cancelKlarnaOrder($klarnaOrder);
+
       $response['status'] = 'ERROR';
       $response['message'] = $this->__("Error: Module is Disabled!");
     }
@@ -217,5 +239,46 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
       ->setHeader('Content-Type', 'application/json')
       ->setBody(Mage::helper('core')
       ->jsonEncode($response));
+  }
+
+  private function _cancelKlarnaOrder($klarnaOrder) {
+    $klarnaOrderId = $klarnaOrder['id'];
+    $reservation = $klarnaOrder['reservation'];
+
+    // TODO: make sure this works with Avenla and Klarna Official modules
+
+    // Oddny/KL_Klarna_NG cancel
+    // see https://github.com/Oddny/KL_Klarna_NG/blob/kco/app/code/community/KL/Klarna/Model/Api/Abstract.php
+    require_once('Klarna/2.4.3/Klarna.php');
+    require_once('Klarna/2.4.3/Country.php');
+    require_once('Klarna/2.4.3/Exceptions.php');
+    require_once('Klarna/2.4.3/transport/xmlrpc-3.0.0.beta/lib/xmlrpc.inc');
+    require_once('Klarna/2.4.3/transport/xmlrpc-3.0.0.beta/lib/xmlrpc_wrappers.inc');
+    require_once('Klarna/2.4.3/pclasses/mysqlstorage.class.php');
+    $klarnaEID = Mage::getStoreConfig('payment/klarna/merchant_id');
+    $klarnaSecret = Mage::getStoreConfig('payment/klarna/shared_secret');
+    $klarnaServer = (Mage::getStoreConfig('payment/klarna/live') == "1" ? "LIVE" : "DEMO");
+
+    $klarna = new Klarna();
+    $klarna->config(
+      $klarnaEID,
+      $klarnaSecret,
+      KlarnaCountry::SE,
+      KlarnaLanguage::SV,
+      KlarnaCurrency::SEK,
+      ($klarnaServer == "LIVE" ? Klarna::LIVE : Klarna::BETA),
+      'json',
+      '',
+      true,
+      true
+    );
+
+    try {
+      $klarna->cancelReservation($reservation);
+    } catch(Exception $e) {
+      $this->_getHelper()->callbackReve($klarnaOrderId, "Error: cancel order at klarna ". $e->getMessage());
+    }
+
+    $this->_getHelper()->callbackReve($klarnaOrderId, "cancel");
   }
 }
