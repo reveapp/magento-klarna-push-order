@@ -9,12 +9,22 @@
  */
 class Reve_KlarnaPushOrder_Model_Customer extends Mage_Customer_Model_Customer
 {
+  private $_klarnaData;
+
+  public function getKlarnaAddress()
+  {
+    return $this->_klarnaData['address']['_item1'];
+  }
+
   public function assignKlarnaData($user)
   {
+
+    $websiteId = Mage::app()->getStore()->getWebsiteId();
+
     // create or update customer account
     $customerData = array (
       'account' => array(
-        'website_id' => '1',
+        'website_id' => $websiteId,
         'group_id' => '1',
         'prefix' => '',
         'firstname' => $user['given_name'],
@@ -54,18 +64,22 @@ class Reve_KlarnaPushOrder_Model_Customer extends Mage_Customer_Model_Customer
       ),
     );
 
-    try {
-      if (!empty($customerData['account']['email']) && Zend_Validate::is($customerData['account']['email'], 'EmailAddress')) {
-        $this
-          ->setWebsiteId(Mage::app()->getStore()->getWebsiteId())
-          ->loadByEmail($customerData['account']['email']);
+    $this->_klarnaData = $customerData;
 
-        if ($this->getId() <= 0) {
-          # Create new customer
-          $this->createCustomer($customerData);
-        }
-      } else {
+    try {
+      if (empty($customerData['account']['email']) ||
+          !Zend_Validate::is($customerData['account']['email'], 'EmailAddress')) {
         throw new Exception($this->__("Customer Email is invalid"));
+      }
+      $this->setWebsiteId($websiteId)
+        ->loadByEmail($customerData['account']['email']);
+
+      if ($this->getId() <= 0) {
+        // Create new customer
+        $this->createCustomer($customerData);
+
+      } else {
+        // TODO: update customer
       }
 
       Mage::log("User " . $this->getId(), null, "klarnapushorder-checkout.log");

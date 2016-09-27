@@ -120,7 +120,21 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
         $cart = $klarnaOrder['cart']['items']; // Klarna cart, not Magento structure
 
         $_customer = Mage::getModel("klarnapushorder/customer");
-        $_customer->assignKlarnaData($user);
+        try {
+          $_customer->assignKlarnaData($user);
+        } catch (Exception $e) {
+          Mage::log("Error creating customer (see exception.log)",null,"klarnapushorder-checkout.log");
+          Mage::logException($e);
+
+          $this->_cancelKlarnaOrder($klarnaOrder);
+
+          $response['status'] = 'ERROR';
+          $response['message'] = $this->__("Error creating customer (store:$storeID):".$e->getMessage());
+          $this->writeResponse($response, $klarnaOrderId);
+
+          Mage::log("-----------", null, "klarnapushorder-checkout.log");
+          return;
+        }
 
         // create sales quote
         $quote = $this->_getHelper()->_getQuote();
