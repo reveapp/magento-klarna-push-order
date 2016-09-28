@@ -59,11 +59,6 @@ class Reve_KlarnaPushOrder_Helper_Data extends Mage_Core_Helper_Abstract
     return $attrInfo;
   }
 
-  public function _getQuote()
-  {
-    return Mage::getSingleton("sales/quote");
-  }
-
   public function callbackReve($orderId, $message)
   {
     try {

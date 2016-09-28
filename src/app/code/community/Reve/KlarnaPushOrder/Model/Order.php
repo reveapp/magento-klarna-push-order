@@ -11,6 +11,19 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
 {
   const DEFAULT_SHIPPING_METHOD_CODE = 'flatrate_flatrate';
 
+  private $_quote;
+
+  public function setQuote($quote)
+  {
+    $this->_quote = $quote;
+    return $this;
+  }
+
+  public function getQuote()
+  {
+    return $this->_quote;
+  }
+
   public function getShippingMethodCode()
   {
     $shippingCode = Mage::getStoreConfig('revetab/general/shipping_method');
@@ -59,7 +72,6 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
 
   public function pushKlarnaCartToQuote($cart, $storeId = null)
   {
-    $quote = Mage::helper("klarnapushorder")->_getQuote();
     // add item to quote
     foreach ($cart as $key => $prod) {
       // load product
@@ -90,14 +102,13 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
       // $product->load($product->getIdBySku($prod['reference']));
 
       $product = Mage::getModel('catalog/product')->load($productId);
-      $quote->addProduct($product, new Varien_Object($variantAttr));
+      $this->_quote->addProduct($product, new Varien_Object($variantAttr));
     }
+    return $this;
   }
 
   public function saveQuote($_customer, $klarna_order)
   {
-    $quote = Mage::helper("klarnapushorder")->_getQuote();
-
     // set billing and shipping based on klarna details
     $klarnaAddress = $_customer->getKlarnaAddress();
     $addressData = array(
@@ -110,8 +121,8 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
       'country_id' => $klarnaAddress['country_id']
     );
 
-    $quote->getBillingAddress()->addData($addressData);
-    $shippingAddress = $quote->getShippingAddress()->addData($addressData);
+    $this->_quote->getBillingAddress()->addData($addressData);
+    $shippingAddress = $this->_quote->getShippingAddress()->addData($addressData);
 
     $paymentMethodCode = $this->getPaymentMethodCode();
 
@@ -120,9 +131,9 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
       ->setPaymentMethod($paymentMethodCode)
       ->setCollectShippingRates(true)
       ->collectShippingRates();
-    $quote->getPayment()->addData(array('method' => $paymentMethodCode));
+    $this->_quote->getPayment()->addData(array('method' => $paymentMethodCode));
 
-    $quote->getPayment()->setAdditionalInformation(array(
+    $this->_quote->getPayment()->setAdditionalInformation(array(
 
       // Avenla module support
       'klarna_order_id' => $klarna_order['id'],
@@ -138,8 +149,8 @@ class Reve_KlarnaPushOrder_Model_Order extends Mage_Sales_Model_Order
     ));
 
     // calculate totals and save
-    $quote->collectTotals();
-    $quote->save();
+    $this->_quote->collectTotals();
+    $this->_quote->save();
 
     return $this;
   }

@@ -61,9 +61,9 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
 
     $klarnaUseTest = in_array(strtolower($klarnaServer), ['demo', 'test', 'testdrive', 'beta']);
 
-    if ($infoOnly) {
-      $reveOrder = Mage::getModel("klarnapushorder/order");
+    $reveOrder = Mage::getModel("klarnapushorder/order");
 
+    if ($infoOnly) {
       $response['testMode'] = $klarnaUseTest;
       $response['klarnaModule'] = $klarnaModule;
       $response['paymentMethodCode'] = $reveOrder->getPaymentMethodCode();
@@ -77,8 +77,6 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
     if ($isEnabled) {
       Mage::log("-----------", null, "klarnapushorder-checkout.log");
       Mage::log("Processing Klarna order:". $klarnaOrderId, null, "klarnapushorder-checkout.log");
-
-      $reveOrder = Mage::getModel("klarnapushorder/order");
 
       // Klarna setup
       $klarnaUrl = Klarna_Checkout_Connector::BASE_URL;
@@ -137,27 +135,20 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
         }
 
         // create sales quote
-        $quote = $this->_getHelper()->_getQuote();
-        if ($storeID) {
-          $quote->setStoreId($storeID);
-        } else {
-          $quote->setStoreId(Mage::app()->getStore('default')->getId());
-        }
-
+        $quote = Mage::getSingleton("sales/quote");
+        $quote->setStoreId($storeID);
+        $quote->assignCustomer($_customer);
 
         try{
           // add cart to quote
-          $reveOrder->pushKlarnaCartToQuote($cart, $storeID);
-
-          // add customer to quote
-          $quote->assignCustomer($_customer);
-
-          $reveOrder->saveQuote($_customer, ['id'=>$klarnaOrderId, 'reservation'=>$klarnaOrder['reservation']]);
+          $reveOrder->setQuote($quote)
+            ->pushKlarnaCartToQuote($cart, $storeID)
+            ->saveQuote($_customer, ['id'=>$klarnaOrderId, 'reservation'=>$klarnaOrder['reservation']]);
 
           Mage::log('quote : '. $quote->getId(), null, "klarnapushorder-checkout.log");
 
           // post quote as an order
-          $service = Mage::getModel('sales/service_quote', $quote);
+          $service = Mage::getModel('sales/service_quote', $reveOrder->getQuote());
           $service->submitAll();
           $newOrder = $service->getOrder();
 
