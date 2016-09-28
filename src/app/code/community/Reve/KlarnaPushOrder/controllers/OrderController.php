@@ -64,6 +64,7 @@ class Reve_KlarnaPushOrder_OrderController extends Mage_Checkout_Controller_Acti
     $reveOrder = Mage::getModel("klarnapushorder/order");
 
     if ($infoOnly) {
+      $response['version'] = '0.9.0'; // TODO: autobump when updating version
       $response['testMode'] = $klarnaUseTest;
       $response['klarnaModule'] = $klarnaModule;
       $response['paymentMethodCode'] = $reveOrder->getPaymentMethodCode();
