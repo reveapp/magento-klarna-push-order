@@ -1,3 +1,5 @@
+**MAGENTO MODULE IS NO LONGER MAINTAINED AND NOT NEEDED TO SUPPORT PURCHASES FROM REVEAPP.COM**
+
 Klarna Push Order for reve
 ==========================
 
